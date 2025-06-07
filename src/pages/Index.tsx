@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Search, Brain, BookOpen, MessageSquare, Plus, Filter, Grid, List } from 'lucide-react';
+import { Search, Brain, BookOpen, MessageSquare, Plus, Filter, Grid, List, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +9,7 @@ import Navigation from '@/components/Navigation';
 import NoteCard from '@/components/NoteCard';
 import ChatInterface from '@/components/ChatInterface';
 import QuickActions from '@/components/QuickActions';
+import Profile from '@/components/Profile';
 
 const Index = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -79,7 +79,7 @@ const Index = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-md">
+          <TabsList className="grid w-full grid-cols-5 max-w-lg">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <Grid className="h-4 w-4" />
               Dashboard
@@ -95,6 +95,10 @@ const Index = () => {
             <TabsTrigger value="insights" className="flex items-center gap-2">
               <Brain className="h-4 w-4" />
               Insights
+            </TabsTrigger>
+            <TabsTrigger value="profile" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Profile
             </TabsTrigger>
           </TabsList>
 
@@ -229,6 +233,10 @@ const Index = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="profile" className="space-y-6">
+            <Profile />
           </TabsContent>
         </Tabs>
       </main>
