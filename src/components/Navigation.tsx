@@ -1,10 +1,27 @@
 
 import React from 'react';
-import { Brain, Settings, User, Search, Bell } from 'lucide-react';
+import { Brain, Settings, User, Bell, LogOut } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from 'react-router-dom';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navigation = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
+
   return (
     <nav className="border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto px-6 py-4">
@@ -21,36 +38,60 @@ const Navigation = () => {
           </div>
 
           {/* Navigation Items */}
-          <div className="hidden md:flex items-center space-x-6">
-            <Button variant="ghost" size="sm">
-              Dashboard
-            </Button>
-            <Button variant="ghost" size="sm">
-              Notes
-            </Button>
-            <Button variant="ghost" size="sm">
-              Collections
-            </Button>
-            <Button variant="ghost" size="sm">
-              AI Chat
-            </Button>
-          </div>
+          {user && (
+            <div className="hidden md:flex items-center space-x-6">
+              <Button variant="ghost" size="sm">
+                Dashboard
+              </Button>
+              <Button variant="ghost" size="sm">
+                Notes
+              </Button>
+              <Button variant="ghost" size="sm">
+                Collections
+              </Button>
+              <Button variant="ghost" size="sm">
+                AI Chat
+              </Button>
+            </div>
+          )}
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-3">
-            <Button variant="ghost" size="sm" className="relative">
-              <Bell className="h-4 w-4" />
-              <Badge className="absolute -top-1 -right-1 w-2 h-2 p-0 bg-destructive" />
-            </Button>
-            
-            <Button variant="ghost" size="sm">
-              <Settings className="h-4 w-4" />
-            </Button>
-            
-            <Button variant="outline" size="sm">
-              <User className="h-4 w-4 mr-2" />
-              Profile
-            </Button>
+            {user ? (
+              <>
+                <Button variant="ghost" size="sm" className="relative">
+                  <Bell className="h-4 w-4" />
+                  <Badge className="absolute -top-1 -right-1 w-2 h-2 p-0 bg-destructive" />
+                </Button>
+                
+                <Button variant="ghost" size="sm">
+                  <Settings className="h-4 w-4" />
+                </Button>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <User className="h-4 w-4 mr-2" />
+                      Profile
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem disabled>
+                      {user.email}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <Button onClick={() => navigate('/auth')}>
+                Sign In
+              </Button>
+            )}
           </div>
         </div>
       </div>
