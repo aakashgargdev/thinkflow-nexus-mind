@@ -2,10 +2,27 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Database } from '@/integrations/supabase/types';
 
-type Note = Database['public']['Tables']['notes']['Row'];
-type NoteInsert = Database['public']['Tables']['notes']['Insert'];
+// Define Note types manually since the table was just created
+export interface Note {
+  id: string;
+  user_id: string;
+  title: string;
+  content: string;
+  tags: string[];
+  type: 'note' | 'collection' | 'link';
+  ai_summary: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateNoteInput {
+  title: string;
+  content: string;
+  tags: string[];
+  type: 'note' | 'collection' | 'link';
+  ai_summary?: string | null;
+}
 
 export const useNotes = () => {
   const { user } = useAuth();
@@ -21,14 +38,17 @@ export const useNotes = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching notes:', error);
+        throw error;
+      }
       return data as Note[];
     },
     enabled: !!user,
   });
 
   const createNoteMutation = useMutation({
-    mutationFn: async (newNote: Omit<NoteInsert, 'user_id' | 'id' | 'created_at' | 'updated_at'>) => {
+    mutationFn: async (newNote: CreateNoteInput) => {
       if (!user) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
@@ -40,8 +60,11 @@ export const useNotes = () => {
         .select()
         .single();
 
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error('Error creating note:', error);
+        throw error;
+      }
+      return data as Note;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes', user?.id] });

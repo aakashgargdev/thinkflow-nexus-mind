@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search, Brain, BookOpen, MessageSquare, Plus, Filter, Grid, List, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -13,12 +12,15 @@ import NoteCard from '@/components/NoteCard';
 import ChatInterface from '@/components/ChatInterface';
 import QuickActions from '@/components/QuickActions';
 import Profile from '@/components/Profile';
+import CreateNoteDialog from '@/components/CreateNoteDialog';
+import { useNotes } from '@/hooks/useNotes';
 
 const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
+  const { notes, isLoading: notesLoading } = useNotes();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -45,36 +47,16 @@ const Index = () => {
     return null;
   }
 
-  // Mock data for demonstration
-  const recentNotes = [
-    {
-      id: 1,
-      title: "AI Research Notes",
-      content: "Exploring the latest developments in large language models and their applications...",
-      tags: ["AI", "Research", "LLM"],
-      type: "note",
-      createdAt: "2 hours ago",
-      aiSummary: "Research notes on recent AI developments focusing on LLMs"
-    },
-    {
-      id: 2,
-      title: "Design Inspiration",
-      content: "Collection of beautiful UI patterns and design systems...",
-      tags: ["Design", "UI/UX", "Inspiration"],
-      type: "collection",
-      createdAt: "1 day ago",
-      aiSummary: "Curated design patterns and UI inspiration"
-    },
-    {
-      id: 3,
-      title: "Project Roadmap",
-      content: "Q1 objectives and key milestones for the knowledge base project...",
-      tags: ["Planning", "Roadmap", "Goals"],
-      type: "note",
-      createdAt: "3 days ago",
-      aiSummary: "Project planning and milestone tracking"
-    }
-  ];
+  // Transform notes data to match NoteCard expectations
+  const transformedNotes = notes.map(note => ({
+    id: parseInt(note.id.slice(-8), 16), // Convert UUID to number for display
+    title: note.title,
+    content: note.content,
+    tags: note.tags || [],
+    type: note.type,
+    createdAt: new Date(note.created_at).toLocaleDateString(),
+    aiSummary: note.ai_summary || 'No AI summary available'
+  }));
 
   return (
     <div className="min-h-screen bg-background">
@@ -140,8 +122,10 @@ const Index = () => {
                   <CardTitle className="text-sm font-medium text-muted-foreground">Total Notes</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">127</div>
-                  <p className="text-xs text-muted-foreground">+12 this week</p>
+                  <div className="text-2xl font-bold">{notes.length}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {notesLoading ? 'Loading...' : 'Real notes from database'}
+                  </p>
                 </CardContent>
               </Card>
               
@@ -182,7 +166,7 @@ const Index = () => {
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
                     <BookOpen className="h-5 w-5" />
-                    Recent Notes
+                    Your Notes {notesLoading && <span className="text-sm text-muted-foreground">(Loading...)</span>}
                   </CardTitle>
                   <div className="flex items-center gap-2">
                     <Button
@@ -203,11 +187,21 @@ const Index = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-3'}>
-                  {recentNotes.map((note) => (
-                    <NoteCard key={note.id} note={note} viewMode={viewMode} />
-                  ))}
-                </div>
+                {transformedNotes.length === 0 ? (
+                  <div className="text-center py-8">
+                    <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground mb-4">
+                      {notesLoading ? 'Loading your notes...' : 'No notes yet. Create your first note to get started!'}
+                    </p>
+                    <CreateNoteDialog />
+                  </div>
+                ) : (
+                  <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-3'}>
+                    {transformedNotes.map((note) => (
+                      <NoteCard key={note.id} note={note} viewMode={viewMode} />
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -220,17 +214,24 @@ const Index = () => {
                   <Filter className="h-4 w-4 mr-2" />
                   Filter
                 </Button>
-                <Button size="sm">
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Note
-                </Button>
+                <CreateNoteDialog />
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recentNotes.map((note) => (
-                <NoteCard key={note.id} note={note} viewMode="grid" />
-              ))}
+              {transformedNotes.length === 0 ? (
+                <div className="col-span-full text-center py-8">
+                  <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground mb-4">
+                    {notesLoading ? 'Loading your notes...' : 'No notes yet. Create your first note!'}
+                  </p>
+                  <CreateNoteDialog />
+                </div>
+              ) : (
+                transformedNotes.map((note) => (
+                  <NoteCard key={note.id} note={note} viewMode="grid" />
+                ))
+              )}
             </div>
           </TabsContent>
 
