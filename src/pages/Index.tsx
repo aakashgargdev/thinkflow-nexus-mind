@@ -14,7 +14,10 @@ import ChatInterface from '@/components/ChatInterface';
 import QuickActions from '@/components/QuickActions';
 import Profile from '@/components/Profile';
 import CreateNoteDialog from '@/components/CreateNoteDialog';
+import PasteIndicator from '@/components/PasteIndicator';
+import PasteHint from '@/components/PasteHint';
 import { useNotes } from '@/hooks/useNotes';
+import { usePasteHandler } from '@/hooks/usePasteHandler';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -22,6 +25,9 @@ const Index = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const { notes, isLoading: notesLoading } = useNotes();
+  
+  // Initialize paste handler
+  usePasteHandler();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -63,6 +69,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
+      <PasteIndicator />
       
       <main className="container mx-auto px-6 py-8">
         {/* Header Section */}
@@ -78,6 +85,9 @@ const Index = () => {
             </div>
             <QuickActions />
           </div>
+
+          {/* Paste Hint */}
+          <PasteHint />
 
           {/* Search Bar */}
           <div className="relative max-w-2xl">
@@ -225,8 +235,7 @@ const Index = () => {
                 <div className="col-span-full text-center py-8">
                   <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground mb-4">
-                    {notesLoading ? 'Loading your notes...' : 'No notes yet. Create your first note!'}
-                  </p>
+                    {notesLoading ? 'Loading your notes...' : 'No notes yet. Create your first note!'}</p>
                   <CreateNoteDialog />
                 </div>
               ) : (
