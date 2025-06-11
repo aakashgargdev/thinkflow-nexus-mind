@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect } from 'react';
 import { useNotes } from './useNotes';
 import { useToast } from './use-toast';
@@ -13,7 +12,7 @@ export const usePasteHandler = () => {
     if (activeElement && (
       activeElement.tagName === 'INPUT' || 
       activeElement.tagName === 'TEXTAREA' || 
-      activeElement.contentEditable === 'true'
+      (activeElement as HTMLElement).contentEditable === 'true'
     )) {
       return;
     }
