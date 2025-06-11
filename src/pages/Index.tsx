@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Search, Brain, BookOpen, MessageSquare, Plus, Filter, Grid, List, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -277,5 +278,3 @@ const Index = () => {
 };
 
 export default Index;
-
-}
