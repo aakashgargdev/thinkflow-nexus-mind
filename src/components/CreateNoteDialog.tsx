@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, X } from "lucide-react";
 import { useNotes } from "@/hooks/useNotes";
 import { useToast } from "@/hooks/use-toast";
+import ImageUpload from './ImageUpload';
 
 const CreateNoteDialog = () => {
   const [open, setOpen] = useState(false);
@@ -18,6 +19,7 @@ const CreateNoteDialog = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [aiSummary, setAiSummary] = useState('');
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const { createNote, isCreating } = useNotes();
   const { toast } = useToast();
@@ -31,6 +33,16 @@ const CreateNoteDialog = () => {
 
   const handleRemoveTag = (tagToRemove: string) => {
     setTags(tags.filter(tag => tag !== tagToRemove));
+  };
+
+  const resetForm = () => {
+    setTitle('');
+    setContent('');
+    setType('note');
+    setTags([]);
+    setTagInput('');
+    setAiSummary('');
+    setImageUrl(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -51,6 +63,7 @@ const CreateNoteDialog = () => {
       type,
       tags: tags,
       ai_summary: aiSummary.trim() || null,
+      image_url: imageUrl,
     }, {
       onSuccess: () => {
         toast({
@@ -58,12 +71,7 @@ const CreateNoteDialog = () => {
           description: "Note created successfully",
         });
         setOpen(false);
-        setTitle('');
-        setContent('');
-        setType('note');
-        setTags([]);
-        setTagInput('');
-        setAiSummary('');
+        resetForm();
       },
       onError: (error) => {
         toast({
@@ -84,7 +92,7 @@ const CreateNoteDialog = () => {
           New Note
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Note</DialogTitle>
         </DialogHeader>
@@ -105,6 +113,14 @@ const CreateNoteDialog = () => {
               onChange={(e) => setContent(e.target.value)}
               rows={6}
               required
+            />
+          </div>
+
+          <div>
+            <ImageUpload
+              onImageUploaded={setImageUrl}
+              currentImageUrl={imageUrl}
+              onImageRemoved={() => setImageUrl(null)}
             />
           </div>
 

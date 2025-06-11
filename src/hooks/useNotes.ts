@@ -12,6 +12,7 @@ export interface Note {
   tags: string[];
   type: 'note' | 'collection' | 'link';
   ai_summary: string | null;
+  image_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -22,6 +23,7 @@ export interface CreateNoteInput {
   tags: string[];
   type: 'note' | 'collection' | 'link';
   ai_summary?: string | null;
+  image_url?: string | null;
 }
 
 export const useNotes = () => {
@@ -71,11 +73,35 @@ export const useNotes = () => {
     },
   });
 
+  const uploadImage = async (file: File): Promise<string> => {
+    if (!user) throw new Error('User not authenticated');
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `${user.id}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('note-images')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error('Error uploading image:', uploadError);
+      throw uploadError;
+    }
+
+    const { data } = supabase.storage
+      .from('note-images')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
   return {
     notes: notesQuery.data || [],
     isLoading: notesQuery.isLoading,
     error: notesQuery.error,
     createNote: createNoteMutation.mutate,
     isCreating: createNoteMutation.isPending,
+    uploadImage,
   };
 };

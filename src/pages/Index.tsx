@@ -55,7 +55,8 @@ const Index = () => {
     tags: note.tags || [],
     type: note.type,
     createdAt: new Date(note.created_at).toLocaleDateString(),
-    aiSummary: note.ai_summary || 'No AI summary available'
+    aiSummary: note.ai_summary || 'No AI summary available',
+    imageUrl: note.image_url
   }));
 
   return (
@@ -276,3 +277,5 @@ const Index = () => {
 };
 
 export default Index;
+
+}

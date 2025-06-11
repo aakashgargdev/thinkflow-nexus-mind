@@ -14,6 +14,7 @@ interface NoteCardProps {
     type: string;
     createdAt: string;
     aiSummary: string;
+    imageUrl?: string | null;
   };
   viewMode: 'grid' | 'list';
 }
@@ -44,6 +45,13 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, viewMode }) => {
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold truncate">{note.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1">{note.aiSummary}</p>
+                {note.imageUrl && (
+                  <img
+                    src={note.imageUrl}
+                    alt="Note"
+                    className="mt-2 max-h-16 rounded border border-border object-cover"
+                  />
+                )}
               </div>
               <div className="flex items-center gap-2">
                 {note.tags.slice(0, 2).map((tag) => (
@@ -87,6 +95,16 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, viewMode }) => {
       </CardHeader>
       
       <CardContent className="pt-0">
+        {note.imageUrl && (
+          <div className="mb-4">
+            <img
+              src={note.imageUrl}
+              alt="Note"
+              className="w-full h-32 object-cover rounded border border-border"
+            />
+          </div>
+        )}
+        
         <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
           {note.content}
         </p>
