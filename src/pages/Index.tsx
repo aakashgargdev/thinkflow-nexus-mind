@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search, Brain, BookOpen, MessageSquare, Plus, Filter, Grid, List, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -24,6 +23,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const { notes, isLoading: notesLoading } = useNotes();
   
   // Initialize paste handler
@@ -34,6 +34,10 @@ const Index = () => {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  const handleProfileClick = () => {
+    setActiveTab('profile');
+  };
 
   // Show loading while checking auth state
   if (loading) {
@@ -68,7 +72,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <Navigation onProfileClick={handleProfileClick} />
       <PasteIndicator />
       
       <main className="container mx-auto px-6 py-8">
@@ -102,7 +106,7 @@ const Index = () => {
         </div>
 
         {/* Main Content */}
-        <Tabs defaultValue="dashboard" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5 max-w-lg">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <Grid className="h-4 w-4" />

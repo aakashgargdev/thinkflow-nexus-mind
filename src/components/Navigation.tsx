@@ -13,13 +13,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const Navigation = () => {
+interface NavigationProps {
+  onProfileClick?: () => void;
+}
+
+const Navigation = ({ onProfileClick }: NavigationProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/auth');
+  };
+
+  const handleProfileClick = () => {
+    if (onProfileClick) {
+      onProfileClick();
+    }
   };
 
   return (
@@ -80,6 +90,10 @@ const Navigation = () => {
                       {user.email}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleProfileClick}>
+                      <User className="h-4 w-4 mr-2" />
+                      View Profile
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="h-4 w-4 mr-2" />
                       Sign Out
