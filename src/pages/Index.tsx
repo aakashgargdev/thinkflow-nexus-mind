@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Search, Brain, BookOpen, MessageSquare, Plus, Filter, Grid, List, User } from 'lucide-react';
+import { Search, Brain, BookOpen, MessageSquare, Plus, Filter, Grid, List, User, Bell } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +17,8 @@ import PasteIndicator from '@/components/PasteIndicator';
 import PasteHint from '@/components/PasteHint';
 import { useNotes } from '@/hooks/useNotes';
 import { usePasteHandler } from '@/hooks/usePasteHandler';
+import Settings from '@/components/Settings';
+import Notifications from '@/components/Notifications';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -115,7 +116,7 @@ const Index = () => {
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
           <div className="overflow-x-auto">
-            <TabsList className="grid w-full grid-cols-5 min-w-max sm:max-w-2xl mx-auto">
+            <TabsList className="grid w-full grid-cols-7 min-w-max sm:max-w-2xl mx-auto">
               <TabsTrigger value="dashboard" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
                 <Grid className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Dashboard</span>
@@ -135,6 +136,14 @@ const Index = () => {
               <TabsTrigger value="profile" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
                 <User className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Profile</span>
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
+                <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Settings</span>
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
+                <Bell className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Notifications</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -296,6 +305,12 @@ const Index = () => {
 
           <TabsContent value="profile" className="space-y-4 sm:space-y-6">
             <Profile />
+          </TabsContent>
+          <TabsContent value="settings" className="space-y-4 sm:space-y-6">
+            <Settings />
+          </TabsContent>
+          <TabsContent value="notifications" className="space-y-4 sm:space-y-6">
+            <Notifications />
           </TabsContent>
         </Tabs>
       </main>

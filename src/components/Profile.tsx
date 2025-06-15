@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -172,51 +171,6 @@ const Profile = () => {
               </Button>
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Settings */}
-      <Card className="border-border/50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Preferences
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
-            <h4 className="font-medium">Notifications</h4>
-            <div className="space-y-2 text-sm">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" defaultChecked className="rounded" />
-                Email notifications for AI insights
-              </label>
-              <label className="flex items-center gap-2">
-                <input type="checkbox" defaultChecked className="rounded" />
-                Weekly knowledge summary
-              </label>
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="rounded" />
-                Daily reminders to add notes
-              </label>
-            </div>
-          </div>
-          
-          <div className="space-y-3">
-            <h4 className="font-medium">Privacy</h4>
-            <div className="space-y-2 text-sm">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" defaultChecked className="rounded" />
-                Allow AI to analyze my notes for insights
-              </label>
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="rounded" />
-                Share anonymous usage data
-              </label>
-            </div>
-          </div>
-          <Separator />
-          <ThemeSettings />
         </CardContent>
       </Card>
     </div>
