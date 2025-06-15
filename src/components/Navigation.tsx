@@ -47,24 +47,6 @@ const Navigation = ({ onProfileClick }: NavigationProps) => {
             </div>
           </div>
 
-          {/* Navigation Items */}
-          {user && (
-            <div className="hidden md:flex items-center space-x-6">
-              <Button variant="ghost" size="sm">
-                Dashboard
-              </Button>
-              <Button variant="ghost" size="sm">
-                Notes
-              </Button>
-              <Button variant="ghost" size="sm">
-                Collections
-              </Button>
-              <Button variant="ghost" size="sm">
-                AI Chat
-              </Button>
-            </div>
-          )}
-
           {/* Right Side Actions */}
           <div className="flex items-center space-x-3">
             {user ? (
