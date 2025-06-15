@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { User, Mail, Calendar, Settings, Edit2, Save, X } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { ThemeSettings } from './ThemeSettings';
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -213,6 +215,8 @@ const Profile = () => {
               </label>
             </div>
           </div>
+          <Separator />
+          <ThemeSettings />
         </CardContent>
       </Card>
     </div>
