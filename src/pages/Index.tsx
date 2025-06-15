@@ -20,11 +20,15 @@ import { useNotes } from '@/hooks/useNotes';
 import { usePasteHandler } from '@/hooks/usePasteHandler';
 import Settings from '@/components/Settings';
 import Notifications from '@/components/Notifications';
+import DashboardTab from "@/components/tabs/DashboardTab";
+import NotesTab from "@/components/tabs/NotesTab";
+import ChatTab from "@/components/tabs/ChatTab";
+import InsightsTab from "@/components/tabs/InsightsTab";
 
 const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('dashboard');
   const { notes, isLoading: notesLoading } = useNotes();
@@ -152,160 +156,22 @@ const Index = () => {
           </div>
 
           <TabsContent value="dashboard" className="space-y-4 sm:space-y-6">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              <Card className="border-border/50 hover:border-border transition-colors">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Notes</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xl sm:text-2xl font-bold">{notes.length}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {notesLoading ? 'Loading...' : 'Real notes from database'}
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-border/50 hover:border-border transition-colors">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">AI Interactions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xl sm:text-2xl font-bold">45</div>
-                  <p className="text-xs text-muted-foreground">+8 today</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-border/50 hover:border-border transition-colors">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Categories</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xl sm:text-2xl font-bold">23</div>
-                  <p className="text-xs text-muted-foreground">Auto-organized</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-border/50 hover:border-border transition-colors">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Connections</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xl sm:text-2xl font-bold">89</div>
-                  <p className="text-xs text-muted-foreground">AI-discovered</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Recent Activity */}
-            <Card className="border-border/50">
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                    <BookOpen className="h-4 w-4 sm:h-5 sm:w-5" />
-                    Your Notes {notesLoading && <span className="text-sm text-muted-foreground">(Loading...)</span>}
-                  </CardTitle>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant={viewMode === 'grid' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setViewMode('grid')}
-                      className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3"
-                    >
-                      <Grid className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span className="hidden sm:ml-2 sm:inline">Grid</span>
-                    </Button>
-                    <Button
-                      variant={viewMode === 'list' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setViewMode('list')}
-                      className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3"
-                    >
-                      <List className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span className="hidden sm:ml-2 sm:inline">List</span>
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {transformedNotes.length === 0 ? (
-                  <div className="text-center py-8 sm:py-12">
-                    <BookOpen className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground mb-4 text-sm sm:text-base">
-                      {notesLoading ? 'Loading your notes...' : 'No notes yet. Create your first note to get started!'}
-                    </p>
-                    <CreateNoteDialog />
-                  </div>
-                ) : (
-                  <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-3'}>
-                    {transformedNotes.map((note) => (
-                      <NoteCard key={note.id} note={note} viewMode={viewMode} />
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <DashboardTab
+              notesLoading={notesLoading}
+              notes={transformedNotes}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+            />
           </TabsContent>
-
           <TabsContent value="notes" className="space-y-4 sm:space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <h2 className="text-xl sm:text-2xl font-semibold">All Notes</h2>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="text-xs sm:text-sm">
-                  <Filter className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                  Filter
-                </Button>
-                <CreateNoteDialog />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {transformedNotes.length === 0 ? (
-                <div className="col-span-full text-center py-8 sm:py-12">
-                  <BookOpen className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground mb-4 text-sm sm:text-base">
-                    {notesLoading ? 'Loading your notes...' : 'No notes yet. Create your first note!'}</p>
-                  <CreateNoteDialog />
-                </div>
-              ) : (
-                transformedNotes.map((note) => (
-                  <NoteCard key={note.id} note={note} viewMode="grid" />
-                ))
-              )}
-            </div>
+            <NotesTab notesLoading={notesLoading} notes={transformedNotes} />
           </TabsContent>
-
           <TabsContent value="chat" className="space-y-4 sm:space-y-6">
-            <ChatInterface />
+            <ChatTab />
           </TabsContent>
-
           <TabsContent value="insights" className="space-y-4 sm:space-y-6">
-            <Card className="border-border/50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                  <Brain className="h-4 w-4 sm:h-5 sm:w-5" />
-                  AI-Generated Insights
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
-                    <h3 className="font-semibold mb-2 text-sm sm:text-base">Knowledge Patterns</h3>
-                    <p className="text-muted-foreground text-xs sm:text-sm">You frequently connect AI research with design principles. Consider exploring AI-driven design tools.</p>
-                  </div>
-                  <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
-                    <h3 className="font-semibold mb-2 text-sm sm:text-base">Content Gaps</h3>
-                    <p className="text-muted-foreground text-xs sm:text-sm">Your notes lack implementation examples. Adding code snippets could enhance understanding.</p>
-                  </div>
-                  <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
-                    <h3 className="font-semibold mb-2 text-sm sm:text-base">Trending Topics</h3>
-                    <p className="text-muted-foreground text-xs sm:text-sm">LLM applications and RAG systems appear most frequently in your recent notes.</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <InsightsTab />
           </TabsContent>
-
           <TabsContent value="profile" className="space-y-4 sm:space-y-6">
             <Profile />
           </TabsContent>
