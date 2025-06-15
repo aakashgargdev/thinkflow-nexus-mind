@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Brain, BookOpen, MessageSquare, Plus, Filter, Grid, List, User, Bell } from 'lucide-react';
+// Alias Lucide icons to avoid conflicts with local components
+import { Search, Brain, BookOpen, MessageSquare, Plus, Filter, Grid, List, User, Bell as BellIcon, Settings as SettingsIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -137,12 +138,14 @@ const Index = () => {
                 <User className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Profile</span>
               </TabsTrigger>
+              {/* Use SettingsIcon instead of Settings component */}
               <TabsTrigger value="settings" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
-                <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+                <SettingsIcon className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Settings</span>
               </TabsTrigger>
+              {/* Use BellIcon instead of Notifications component */}
               <TabsTrigger value="notifications" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
-                <Bell className="h-3 w-3 sm:h-4 sm:w-4" />
+                <BellIcon className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Notifications</span>
               </TabsTrigger>
             </TabsList>
