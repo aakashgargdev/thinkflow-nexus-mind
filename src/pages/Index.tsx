@@ -1,25 +1,19 @@
+
 import React, { useState, useEffect } from 'react';
 // Alias Lucide icons to avoid conflicts with local components
-import { Search, Brain, BookOpen, MessageSquare, Plus, Filter, Grid, List, User, Bell as BellIcon, Settings as SettingsIcon } from 'lucide-react';
+import { Search, Brain, BookOpen, MessageSquare, Grid, List } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
-import NoteCard from '@/components/NoteCard';
-import ChatInterface from '@/components/ChatInterface';
 import QuickActions from '@/components/QuickActions';
-import Profile from '@/components/Profile';
-import CreateNoteDialog from '@/components/CreateNoteDialog';
 import PasteIndicator from '@/components/PasteIndicator';
 import PasteHint from '@/components/PasteHint';
 import { useNotes } from '@/hooks/useNotes';
 import { usePasteHandler } from '@/hooks/usePasteHandler';
-import Settings from '@/components/Settings';
-import Notifications from '@/components/Notifications';
+
 import DashboardTab from "@/components/tabs/DashboardTab";
 import NotesTab from "@/components/tabs/NotesTab";
 import ChatTab from "@/components/tabs/ChatTab";
@@ -28,11 +22,11 @@ import InsightsTab from "@/components/tabs/InsightsTab";
 const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const [viewMode, setViewMode<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('dashboard');
   const { notes, isLoading: notesLoading } = useNotes();
-  
+
   // Initialize paste handler
   usePasteHandler();
 
@@ -41,10 +35,6 @@ const Index = () => {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
-
-  const handleProfileClick = () => {
-    setActiveTab('profile');
-  };
 
   // Show loading while checking auth state
   if (loading) {
@@ -79,9 +69,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation onProfileClick={handleProfileClick} />
+      <Navigation />
       <PasteIndicator />
-      
       <main className="container mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Header Section */}
         <div className="mb-6 sm:mb-8">
@@ -121,7 +110,7 @@ const Index = () => {
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
           <div className="overflow-x-auto">
-            <TabsList className="grid w-full grid-cols-7 min-w-max sm:max-w-2xl mx-auto">
+            <TabsList className="grid w-full grid-cols-4 min-w-max sm:max-w-2xl mx-auto">
               <TabsTrigger value="dashboard" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
                 <Grid className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Dashboard</span>
@@ -137,20 +126,6 @@ const Index = () => {
               <TabsTrigger value="insights" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
                 <Brain className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Insights</span>
-              </TabsTrigger>
-              <TabsTrigger value="profile" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
-                <User className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden xs:inline">Profile</span>
-              </TabsTrigger>
-              {/* Use SettingsIcon instead of Settings component */}
-              <TabsTrigger value="settings" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
-                <SettingsIcon className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden xs:inline">Settings</span>
-              </TabsTrigger>
-              {/* Use BellIcon instead of Notifications component */}
-              <TabsTrigger value="notifications" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
-                <BellIcon className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden xs:inline">Notifications</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -171,15 +146,6 @@ const Index = () => {
           </TabsContent>
           <TabsContent value="insights" className="space-y-4 sm:space-y-6">
             <InsightsTab />
-          </TabsContent>
-          <TabsContent value="profile" className="space-y-4 sm:space-y-6">
-            <Profile />
-          </TabsContent>
-          <TabsContent value="settings" className="space-y-4 sm:space-y-6">
-            <Settings />
-          </TabsContent>
-          <TabsContent value="notifications" className="space-y-4 sm:space-y-6">
-            <Notifications />
           </TabsContent>
         </Tabs>
       </main>
