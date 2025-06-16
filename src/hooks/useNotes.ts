@@ -13,6 +13,7 @@ export interface Note {
   type: 'note' | 'collection' | 'link';
   ai_summary: string | null;
   image_url: string | null;
+  is_starred: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -24,6 +25,16 @@ export interface CreateNoteInput {
   type: 'note' | 'collection' | 'link';
   ai_summary?: string | null;
   image_url?: string | null;
+}
+
+export interface UpdateNoteInput {
+  title?: string;
+  content?: string;
+  tags?: string[];
+  type?: 'note' | 'collection' | 'link';
+  ai_summary?: string | null;
+  image_url?: string | null;
+  is_starred?: boolean;
 }
 
 export const useNotes = () => {
@@ -73,6 +84,130 @@ export const useNotes = () => {
     },
   });
 
+  const updateNoteMutation = useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: UpdateNoteInput }) => {
+      if (!user) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('notes')
+        .update(updates)
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating note:', error);
+        throw error;
+      }
+      return data as Note;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes', user?.id] });
+    },
+  });
+
+  const deleteNoteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      if (!user) throw new Error('User not authenticated');
+
+      const { error } = await supabase
+        .from('notes')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error deleting note:', error);
+        throw error;
+      }
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes', user?.id] });
+    },
+  });
+
+  const toggleStarMutation = useMutation({
+    mutationFn: async (id: string) => {
+      if (!user) throw new Error('User not authenticated');
+
+      // First get the current state
+      const { data: currentNote, error: fetchError } = await supabase
+        .from('notes')
+        .select('is_starred')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching note:', fetchError);
+        throw fetchError;
+      }
+
+      // Toggle the star
+      const { data, error } = await supabase
+        .from('notes')
+        .update({ is_starred: !currentNote.is_starred })
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error toggling star:', error);
+        throw error;
+      }
+      return data as Note;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes', user?.id] });
+    },
+  });
+
+  const duplicateNoteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      if (!user) throw new Error('User not authenticated');
+
+      // First get the note to duplicate
+      const { data: originalNote, error: fetchError } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching note:', fetchError);
+        throw fetchError;
+      }
+
+      // Create a copy
+      const { data, error } = await supabase
+        .from('notes')
+        .insert({
+          title: `${originalNote.title} (Copy)`,
+          content: originalNote.content,
+          tags: originalNote.tags,
+          type: originalNote.type,
+          ai_summary: originalNote.ai_summary,
+          image_url: originalNote.image_url,
+          user_id: user.id,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error duplicating note:', error);
+        throw error;
+      }
+      return data as Note;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes', user?.id] });
+    },
+  });
+
   const uploadImage = async (file: File): Promise<string> => {
     if (!user) throw new Error('User not authenticated');
 
@@ -102,6 +237,14 @@ export const useNotes = () => {
     error: notesQuery.error,
     createNote: createNoteMutation.mutate,
     isCreating: createNoteMutation.isPending,
+    updateNote: updateNoteMutation.mutate,
+    isUpdating: updateNoteMutation.isPending,
+    deleteNote: deleteNoteMutation.mutate,
+    isDeleting: deleteNoteMutation.isPending,
+    toggleStar: toggleStarMutation.mutate,
+    isTogglingStar: toggleStarMutation.isPending,
+    duplicateNote: duplicateNoteMutation.mutate,
+    isDuplicating: duplicateNoteMutation.isPending,
     uploadImage,
   };
 };

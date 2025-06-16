@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 // Alias Lucide icons to avoid conflicts with local components
 import { Search, Brain, BookOpen, MessageSquare, Grid, List } from 'lucide-react';
@@ -55,13 +54,10 @@ const Index = () => {
     return null;
   }
 
-  // Transform notes data to match NoteCard expectations
+  // Transform notes data to match NoteCard expectations - now using the actual Note interface
   const transformedNotes = notes.map(note => ({
+    ...note,
     id: parseInt(note.id.slice(-8), 16), // Convert UUID to number for display
-    title: note.title,
-    content: note.content,
-    tags: note.tags || [],
-    type: note.type,
     createdAt: new Date(note.created_at).toLocaleDateString(),
     aiSummary: note.ai_summary || 'No AI summary available',
     imageUrl: note.image_url
@@ -133,13 +129,13 @@ const Index = () => {
           <TabsContent value="dashboard" className="space-y-4 sm:space-y-6">
             <DashboardTab
               notesLoading={notesLoading}
-              notes={transformedNotes}
+              notes={notes}
               viewMode={viewMode}
               setViewMode={setViewMode}
             />
           </TabsContent>
           <TabsContent value="notes" className="space-y-4 sm:space-y-6">
-            <NotesTab notesLoading={notesLoading} notes={transformedNotes} />
+            <NotesTab notesLoading={notesLoading} notes={notes} />
           </TabsContent>
           <TabsContent value="chat" className="space-y-4 sm:space-y-6">
             <ChatTab />

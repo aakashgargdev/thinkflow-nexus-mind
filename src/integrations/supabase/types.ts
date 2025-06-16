@@ -16,6 +16,7 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
+          is_starred: boolean
           tags: string[] | null
           title: string
           type: string | null
@@ -28,6 +29,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_starred?: boolean
           tags?: string[] | null
           title: string
           type?: string | null
@@ -40,6 +42,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_starred?: boolean
           tags?: string[] | null
           title?: string
           type?: string | null

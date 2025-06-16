@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Filter, BookOpen } from "lucide-react";
 import CreateNoteDialog from "@/components/CreateNoteDialog";
 import NoteCard from "@/components/NoteCard";
+import { Note } from "@/hooks/useNotes";
 
 interface NotesTabProps {
   notesLoading: boolean;
-  notes: any[];
+  notes: Note[];
 }
 
 const NotesTab: React.FC<NotesTabProps> = ({ notesLoading, notes }) => (
